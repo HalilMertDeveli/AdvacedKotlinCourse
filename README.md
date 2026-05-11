@@ -1,4 +1,4 @@
-# BesinlerKitabiGradleWork
+# FoodBookGradleWork
 
 This repository is a **Kotlin learning project** built during the Atil Samancioglu Android course.  
 Its main goal is to teach how core Android components work together in a real mini app flow (MVVM, Room, Retrofit, Navigation, RecyclerView, and LiveData).
