@@ -2,4 +2,8 @@
     <string name="app_name">BesinlerKitabiGradleWork</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">Navigasyon menusunu ac</string>
+    <string name="drawer_close">Navigasyon menusunu kapat</string>
+    <string name="menu_food_list">Besin Listesi</string>
+    <string name="menu_food_detail">Besin Detayi</string>
 </resources>

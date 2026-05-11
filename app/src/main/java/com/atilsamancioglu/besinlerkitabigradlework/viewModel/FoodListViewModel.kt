@@ -84,4 +84,9 @@ class FoodListViewModel(application: Application) : BaseViewModel(application) {
         }
         privateSharedPreferencesInstance.saveTime(System.nanoTime())
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 }

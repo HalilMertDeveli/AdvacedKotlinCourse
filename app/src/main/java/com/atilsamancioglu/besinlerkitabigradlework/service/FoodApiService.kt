@@ -13,7 +13,7 @@ class FoodApiService {
 
     //Base URL = https://raw.githubusercontent.com/
     //Data URL = atilsamancioglu/btk20-jsonveriseti/master/besinler.json
-    private val BASE_URL = " https://raw.githubusercontent.com/"
+    private val BASE_URL = "https://raw.githubusercontent.com/"
     private val api = Retrofit.Builder()
         .baseUrl(BASE_URL)//we gave the url
         .addConverterFactory(GsonConverterFactory.create())//for json to string

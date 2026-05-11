@@ -1,13 +1,19 @@
 package com.atilsamancioglu.besinlerkitabigradlework.viewModel
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.atilsamancioglu.besinlerkitabigradlework.model.Food
+import com.atilsamancioglu.besinlerkitabigradlework.service.FoodDatabase
+import kotlinx.coroutines.launch
 
-class FoodDetailViewModel : ViewModel() {
+class FoodDetailViewModel(application: Application) : BaseViewModel(application) {
     val foodLiveData = MutableLiveData<Food>()
 
-    fun getDataFromRoom() {
-        val banana = Food("Banana", "100", "100", "120", "50", "banana.jpg")
+    fun getDataFromRoom(uuid: Int) {
+        launch {
+            val dao = FoodDatabase(getApplication()).foodDao()
+            val food = dao.getFood(uuid)
+            foodLiveData.value = food
+        }
     }
 }

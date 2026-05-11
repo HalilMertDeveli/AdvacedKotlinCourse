@@ -1,30 +1,25 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    namespace "com.atilsamancioglu.besinlerkitabigradlework"
+    compileSdk 34
 
     defaultConfig {
-        configurations.configureEach {
-            resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
-        }
         applicationId "com.atilsamancioglu.besinlerkitabigradlework"
-        minSdkVersion 22
-        targetSdkVersion 30
+        minSdk 22
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    
-    buildFeatures{
-        buildFeatures{
-            dataBinding true
-        }
+
+    buildFeatures {
+        dataBinding true
+        viewBinding true
     }
 
     buildTypes {
@@ -34,54 +29,48 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = '17'
     }
-
 }
 
 dependencies {
-
-    def lifeCycleExtensionVersion = '1.1.1'
-    def supportVersion = '28.0.0'
-    def retrofitVersion = '2.8.1'
-    def glideVersion = '4.11.0'
-    def rxJavaVersion = '2.2.8'
-    def rxAndroidVersion = '2.1.1'
-    def roomVersion = '2.6.1'
     def navVersion = '2.7.7'
-    def preference_version ="1.2.1"
+    def roomVersion = '2.6.1'
+    def retrofitVersion = '2.9.0'
+    def glideVersion = '4.16.0'
+    def lifecycleVersion = '2.7.0'
 
-
-    implementation "androidx.preference:preference-ktx:$preference_version"
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation "android.arch.lifecycle:extensions:$lifeCycleExtensionVersion"
-    implementation "androidx.room:room-runtime:$roomVersion"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    kapt "androidx.room:room-compiler:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.11.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
-    implementation "com.google.android.material:material:1.1.0"
+
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+
+    implementation "io.reactivex.rxjava2:rxjava:2.2.21"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
+
     implementation "com.github.bumptech.glide:glide:$glideVersion"
-    implementation "com.android.support:design:$supportVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
+    implementation "androidx.preference:preference-ktx:1.2.1"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
 
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

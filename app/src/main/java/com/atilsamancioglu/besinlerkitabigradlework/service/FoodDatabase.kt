@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.atilsamancioglu.besinlerkitabigradlework.model.Food
 
-@Database(entities = [Food::class], version = 1)
+@Database(entities = [Food::class], version = 1, exportSchema = false)
 abstract class FoodDatabase: RoomDatabase() {
     abstract fun foodDao():FoodDAO
 
@@ -26,7 +26,7 @@ abstract class FoodDatabase: RoomDatabase() {
         private fun createDatabase(context: Context) = Room.databaseBuilder(
             context.applicationContext,
             FoodDatabase::class.java,"foodDatabase"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
 
