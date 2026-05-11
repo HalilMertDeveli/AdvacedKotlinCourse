@@ -1,135 +1,135 @@
 # BesinlerKitabiGradleWork
 
-Bu repo, Atil Samancioglu egitimi dogrultusunda gelistirilmis bir **Kotlin ogrenme projesidir**.  
-Amac; Android tarafinda modern temel taslari (MVVM, Room, Retrofit, Navigation, RecyclerView, LiveData) birlikte kullanarak **gercek bir mini uygulama akisini** bastan sona ogrenmektir.
+This repository is a **Kotlin learning project** built during the Atil Samancioglu Android course.  
+Its main goal is to teach how core Android components work together in a real mini app flow (MVVM, Room, Retrofit, Navigation, RecyclerView, and LiveData).
 
-Uygulama, besin verilerini internetten alir, yerelde saklar ve liste/detay ekranlarinda gosterir.
+The app fetches food data from the internet, stores it locally, and displays it on list/detail screens.
 
-## Bu Proje Neden Onemli?
+## Why This Project Matters
 
-Bu proje "sadece ekran gosteren" bir ornek degildir; Android'de sik kullanilan kavramlari tek uygulama icinde birlestirir:
+This project is more than a static UI demo. It combines the most common Android building blocks in one place:
 
-- API'den veri cekme
-- Veriyi Room ile cacheleme
-- UI state'ini ViewModel + LiveData ile yonetme
-- Fragmentler arasi guvenli arguman gecisi (Safe Args)
-- RecyclerView ile performansli listeleme
-- Glide ile agdan gorsel yukleme
+- Fetching data from a remote API
+- Caching data with Room
+- Managing UI state with ViewModel + LiveData
+- Safe screen-to-screen argument passing (Safe Args)
+- Efficient list rendering with RecyclerView
+- Remote image loading with Glide
 
-Kisacasi bu repo, Android'de orta seviyeye geciste referans alinabilecek bir ogrenme dosyasi gibi dusunulebilir.
+In short, this repository is a practical stepping stone from beginner-level Android to intermediate-level app structure.
 
-## Ekran Goruntuleri
+## Screenshots
 
-### Besin Listesi
+### Food List Screen
 
-![Besin listesi ekrani](docs/images/list-screen.png)
+![Food list screen](docs/images/list-screen.png)
 
-### Besin Detay
+### Food Detail Screen
 
-![Besin detay ekrani](docs/images/detail-screen.png)
+![Food detail screen](docs/images/detail-screen.png)
 
-## Uygulama Ozellikleri
+## App Features
 
-- Besin listesini uzak JSON kaynagindan alir.
-- Cekilen veriyi Room veritabanina kaydeder.
-- Liste ekraninda besin adi + kalori + gorsel gosterir.
-- Liste elemanina tiklaninca detay ekranina gecer.
-- Detay ekraninda secilen besinin tum makro degerlerini gosterir.
-- Swipe-to-refresh ile manuel guncelleme yapar.
+- Fetches a food list from a remote JSON source
+- Saves fetched data into Room database
+- Shows food name, calorie, and image in a list
+- Navigates to detail screen on item click
+- Shows detailed nutritional values on the detail page
+- Supports manual refresh with swipe-to-refresh
 
-## Kullanilan Teknolojiler
+## Tech Stack
 
-- **Dil:** Kotlin
-- **Mimari:** MVVM
-- **UI Katmani:** Fragment, RecyclerView, ViewBinding, DataBinding
-- **State Yonetimi:** LiveData, ViewModel
-- **Ag Katmani:** Retrofit, Gson Converter
-- **Asenkron:** RxJava2 + Coroutines
-- **Lokal Veri:** Room
-- **Navigasyon:** Navigation Component + Safe Args
-- **Gorsel Yukleme:** Glide
+- **Language:** Kotlin
+- **Architecture:** MVVM
+- **UI Layer:** Fragment, RecyclerView, ViewBinding, DataBinding
+- **State Management:** LiveData, ViewModel
+- **Network Layer:** Retrofit, Gson Converter
+- **Async:** RxJava2 + Coroutines
+- **Local Storage:** Room
+- **Navigation:** Navigation Component + Safe Args
+- **Image Loading:** Glide
 - **Build:** AGP 8.2.2, Gradle 8.5, Kotlin 1.9.22
 - **JVM Target:** Java 17
 
-## Mimariyi Uzun Uzun Anlatim
+## Detailed Architecture Walkthrough
 
-### 1) `model` katmani
+### 1) `model` layer
 
-`Food` sinifi hem JSON parse etmek hem de Room entity olarak kullanilmak uzere tasarlanmistir.
+The `Food` class is designed to be used for both API parsing and local persistence.
 
-- `@SerializedName` ile API'den gelen alanlar map edilir.
-- `@Entity` ve `@PrimaryKey(autoGenerate = true)` ile Room tablo yapisi olusur.
-- Ayni modelin hem agdan gelen veri hem lokal kayit icin kullanilmasi ogrenme asamasinda anlasilirlik saglar.
+- `@SerializedName` maps API JSON fields to Kotlin properties.
+- `@Entity` and `@PrimaryKey(autoGenerate = true)` define the Room table schema.
+- Using one model for remote + local data keeps learning flow simple and clear.
 
-### 2) `service` katmani
+### 2) `service` layer
 
-Bu katman iki ana gorev yapar:
+This layer has two responsibilities:
 
-1. **Uzak veri erisimi (Retrofit)**
-   - `FoodApi`: endpoint tanimi
-   - `FoodApiService`: Retrofit instance olusturma ve API cagrisi
-2. **Lokal veri erisimi (Room)**
-   - `FoodDAO`: ekle, listele, tek kayit getir, sil
-   - `FoodDatabase`: singleton Room database kurulumu
+1. **Remote data access (Retrofit)**
+   - `FoodApi`: endpoint definition
+   - `FoodApiService`: Retrofit setup and API invocation
+2. **Local data access (Room)**
+   - `FoodDAO`: insert, list, fetch-one, delete operations
+   - `FoodDatabase`: singleton Room database initialization
 
-Boylece veri kaynagi soyutlanir; UI tarafi "veri nereden geldi" detayina daha az bagimli olur.
+This separation reduces coupling between UI and data source details.
 
-### 3) `viewModel` katmani
+### 3) `viewModel` layer
 
-ViewModel siniflari UI state'ini tasir ve ekranlara gerekli datayi hazirlar:
+ViewModels hold UI state and prepare data for screens:
 
 - `FoodListViewModel`
-  - Agdan veri ceker
-  - Room'a kaydeder
-  - `foodList`, `foodErrorMessage`, `foodIsLoading` LiveData'larini gunceller
+  - Fetches data from network
+  - Saves data to Room
+  - Updates `foodList`, `foodErrorMessage`, and `foodIsLoading`
 - `FoodDetailViewModel`
-  - Secilen `uuid` ile Room'dan tek kaydi getirir
-  - `foodLiveData` ile detay ekranina aktarir
+  - Reads a single item from Room using `uuid`
+  - Exposes result through `foodLiveData`
 - `BaseViewModel`
-  - CoroutineScope yonetimi ve lifecycle temizligi icin temel siniftir
+  - Provides coroutine scope + lifecycle cleanup base behavior
 
-Bu yapi sayesinde Fragment'lar sadece UI isine odaklanir, veri/logic ViewModel'de kalir.
+Because of this structure, Fragments focus on rendering UI while business/data logic stays in ViewModel classes.
 
-### 4) `view` katmani
+### 4) `view` layer
 
 - `BesinListesiFragment`
-  - RecyclerView kurar
-  - SwipeRefresh olayini dinler
-  - LiveData observer'lari ile loading/error/list state gosterimini yapar
+  - Configures RecyclerView
+  - Handles swipe refresh event
+  - Observes LiveData for loading/error/success states
 - `BesinDetayiFragment`
-  - Safe Args ile gelen `besinId` degerini alir
-  - ViewModel'e sorup Room'dan detayi ceker
-  - Text ve gorseli ekrana bind eder
+  - Receives `besinId` via Safe Args
+  - Asks ViewModel for selected item
+  - Binds text and image to the UI
 - `MainActivity`
-  - NavHost container gorevi gorur
+  - Hosts the NavHost container
 
-### 5) `adapter` katmani
+### 5) `adapter` layer
 
-`FoodRecyclerAdapter` liste satirlarini cizer:
+`FoodRecyclerAdapter` handles list row rendering:
 
-- ViewBinding ile row elemanlarini doldurur
-- Glide extension fonksiyonuyla gorsel yukler
-- Satira tiklandiginda `BesinListesiFragmentDirections` ile detay ekranina guvenli navigation yapar
+- Binds row UI with ViewBinding
+- Loads image using Glide extension helpers
+- Navigates safely via `BesinListesiFragmentDirections` on row click
 
-### 6) `util` katmani
+### 6) `util` layer
 
-- `downloadImage` ve `makePlaceHolder`: Glide islemlerini sade tutar
-- `PrivateSharedPreferences`: zaman bilgisini saklayarak cache kontrolu altyapisina zemin hazirlar
+- `downloadImage` and `makePlaceHolder` keep image-loading code reusable and clean.
+- `PrivateSharedPreferences` stores timestamp data as a foundation for cache-time logic.
 
-## Uctan Uca Veri Akisi
+## End-to-End Data Flow
 
-1. Kullanici liste ekranina gelir.
-2. `refreshData()` tetiklenir.
-3. Retrofit ile JSON cekilir.
-4. Sonuc Room'a yazilir (`deleteAllFood` + `insertAll`).
-5. Eklenen satirlarin `uuid` degerleri modele islenir.
-6. `foodList` LiveData update olur.
-7. RecyclerView yeni listeyi cizer.
-8. Kullanici bir item'a tiklar.
-9. `uuid` Safe Args ile detay fragmentina gider.
-10. Room'dan tek kayit okunur ve detay ekrani guncellenir.
+1. User opens the list screen.
+2. `refreshData()` is triggered.
+3. Retrofit fetches JSON data.
+4. Result is written into Room (`deleteAllFood` + `insertAll`).
+5. Inserted row IDs are assigned back to each model's `uuid`.
+6. `foodList` LiveData is updated.
+7. RecyclerView redraws with fresh data.
+8. User taps one item.
+9. `uuid` is sent to detail screen via Safe Args.
+10. Detail screen reads the selected row from Room and renders it.
 
-## Proje Dizini
+## Project Structure
 
 ```text
 BTKAdvacedKotlinCourse/
@@ -148,23 +148,23 @@ BTKAdvacedKotlinCourse/
 └─ README.md
 ```
 
-## Kurulum ve Calistirma
+## Setup and Run
 
-### Gereksinimler
+### Requirements
 
-- Android Studio (guncel surum)
-- JDK 17 veya uzeri
+- Android Studio (latest recommended)
+- JDK 17 or newer
 - Android SDK (compileSdk 34)
 
-### Kurulum
+### Clone
 
 ```bash
 git clone https://github.com/HalilMertDeveli/BTKAdvacedKotlinCourse.git
 ```
 
-Sonrasinda Android Studio ile acip Gradle sync tamamlandiginda calistirabilirsiniz.
+Then open the project in Android Studio and run it after Gradle sync completes.
 
-### Build Komutlari
+### Build Commands
 
 Linux/macOS:
 
@@ -178,33 +178,33 @@ Windows:
 .\gradlew.bat build
 ```
 
-## Dogrulama Durumu
+## Verification Status
 
-Bu projede derleme testi yapildi ve uygulama **basariyla build oldu**.  
-README icindeki ekran goruntuleri uygulamanin calisan halinden alinmistir.
+Build verification was executed and the project **builds successfully**.  
+The screenshots in this README were captured from the running app.
 
-## Ogrenme Projesi Olarak Neler Ogrenilir?
+## What You Learn From This Project
 
-Bu repo ile su basliklar pratik edilir:
+This repository helps you practice:
 
-- MVVM ile katmanli dusunme
-- UI state yonetimi (loading/error/success)
-- API + lokal DB birlikte kullanimi
-- Navigation graph mantigi
-- Fragment lifecycle ve binding kullanimi
-- Asenkron islemlerde thread yonetimi
+- Layered thinking with MVVM
+- UI state handling (loading/error/success)
+- Combining API and local database workflows
+- Navigation graph and argument passing
+- Fragment lifecycle + binding patterns
+- Async flow and thread handling in Android
 
-Egitim bitiminde bu proje, daha buyuk uygulamalara gecmeden once guclu bir temel olusturur.
+By the end of the learning process, this project provides a strong base before moving to larger-scale Android apps.
 
-## Ilerletme Onerileri
+## Suggested Next Improvements
 
-- RxJava veya Coroutines'ten birini secip tek yaklasima gecmek
-- Repository katmani ekleyip test edilebilirligi artirmak
-- `CompositeDisposable` temizligini `onCleared` icinde netlestirmek
-- String kaynaklarini tamamen `strings.xml` uzerine tasimak
-- Hata durumlari icin kullaniciya daha zengin mesajlar gostermek
+- Standardize async approach (choose RxJava or Coroutines consistently)
+- Add a Repository layer for better testability
+- Ensure `CompositeDisposable` is always cleared in `onCleared`
+- Move all hardcoded texts fully into `strings.xml`
+- Improve user-facing error feedback and retry handling
 
-## Kaynak Repo
+## Source Repository
 
-Projenin GitHub adresi:  
+GitHub repository:  
 [HalilMertDeveli/BTKAdvacedKotlinCourse](https://github.com/HalilMertDeveli/BTKAdvacedKotlinCourse.git)
